@@ -33,14 +33,14 @@ lccp_segmentation::~lccp_segmentation(){
 
 void lccp_segmentation::init(PointCloud input_cloud, supervoxel_parameters &opt){
   this->cloud_ = input_cloud.makeShared();
-  this->detected_objects.resize(0);
+  this->detected_objects_.resize(0);
   set_parameters(opt);
   this->initialized_ = true;
 }
 
 void lccp_segmentation::init(PointCloud input_cloud){
   this->cloud_ = input_cloud.makeShared();
-  this->detected_objects.resize(0);
+  this->detected_objects_.resize(0);
   set_default_parameters();
   this->initialized_ = true;
 }
@@ -85,7 +85,7 @@ void lccp_segmentation::set_default_parameters(){
 
 void lccp_segmentation::reset(){
   this->cloud_->points.resize(0);
-  this->detected_objects.resize(0);
+  this->detected_objects_.resize(0);
   this->lccp_labeled_cloud_->points.resize(0);
   this->labeled_voxel_cloud_->points.resize(0);
   this->normal_cloud_->points.resize(0);

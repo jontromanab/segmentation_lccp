@@ -53,21 +53,21 @@ protected:
   ///default value of disable_transform for supervoxel algorithm
   static const bool DISABLE_TRANSFORM = true;
    ///default value of voxel_resolution for supervoxel algorithm
-  static const double VOXEL_RESOLUTION = 0.0075f;
+  static constexpr double VOXEL_RESOLUTION = 0.0075f;
   ///default value of seed_resolution for supervoxel algorithm
-  static const double SEED_RESOLUTION = 0.03f;
+  static constexpr double SEED_RESOLUTION = 0.03f;
   ///default value of color_importance for supervoxel algorithm
-  static const double COLOR_IMPORTANCE = 0.0f;
+  static constexpr double COLOR_IMPORTANCE = 0.0f;
   ///default value of spatial_importance for supervoxel algorithm
-  static const double SPATIAL_IMPORTANCE = 1.0f;
+  static constexpr double SPATIAL_IMPORTANCE = 1.0f;
   ///default value of normal_importance for supervoxel algorithm
-  static const double NORMAL_IMPORTANCE = 4.0f;
+  static constexpr double NORMAL_IMPORTANCE = 4.0f;
 
   // LCCP segmentation parameters
   ///default value of concavity_tolerance_threshold of lccp algorithm
-  static const double CONCAVITY_TOLERANCE_THRESHOLD = 10;
+  static constexpr double CONCAVITY_TOLERANCE_THRESHOLD = 10;
   ///default value of smoothness_tolerance_threshold of lccp algorithm
-  static const double SMOOTHNESS_THRESHOLD = 0.1f;
+  static constexpr double SMOOTHNESS_THRESHOLD = 0.1f;
   ///default value of min_segment_size of lccp algorithm
   static const int MIN_SEGMENT_SIZE = 3;
   ///default value of use_extended_convexity of lccp algorithm
@@ -77,9 +77,9 @@ protected:
 
   // other parameters
   ///default value of min distance for object detection on the table
-  static const double ZMIN = 0.02;
+  static constexpr double ZMIN = 0.02;
   ///default value of max distance for object detection on the table
-  static const double ZMAX = 2.;
+  static constexpr double ZMAX = 2.;
   ///default value of the threshold of min points required to consider a cluster as valid
   static const int TH_POINTS = 400;
 
@@ -148,21 +148,21 @@ protected:
   ///default value of disable_transform for supervoxel algorithm
   static const bool DISABLE_TRANSFORM = true;
    ///default value of voxel_resolution for supervoxel algorithm
-  static const double VOXEL_RESOLUTION = 0.0075f;
+  static constexpr double VOXEL_RESOLUTION = 0.0075f;
   ///default value of seed_resolution for supervoxel algorithm
-  static const double SEED_RESOLUTION = 0.03f;
+  static constexpr double SEED_RESOLUTION = 0.03f;
   ///default value of color_importance for supervoxel algorithm
-  static const double COLOR_IMPORTANCE = 0.0f;
+  static constexpr double COLOR_IMPORTANCE = 0.0f;
   ///default value of spatial_importance for supervoxel algorithm
-  static const double SPATIAL_IMPORTANCE = 1.0f;
+  static constexpr double SPATIAL_IMPORTANCE = 1.0f;
   ///default value of normal_importance for supervoxel algorithm
-  static const double NORMAL_IMPORTANCE = 4.0f;
+  static constexpr double NORMAL_IMPORTANCE = 4.0f;
 
   // LCCP segmentation parameters
   ///default value of concavity_tolerance_threshold of lccp algorithm
-  static const double CONCAVITY_TOLERANCE_THRESHOLD = 10;
+  static constexpr double CONCAVITY_TOLERANCE_THRESHOLD = 10;
   ///default value of smoothness_threshold of lccp algorithm
-  static const double SMOOTHNESS_THRESHOLD = 0.1f;
+  static constexpr double SMOOTHNESS_THRESHOLD = 0.1f;
   ///default value of min_segment_size of lccp algorithm
   static const int MIN_SEGMENT_SIZE = 3;
   ///default value of use_extended_convexity of lccp algorithm
@@ -172,9 +172,9 @@ protected:
 
   // other parameters
   ///default value of min distance for object detection on the table
-  static const double ZMIN = 0.02;
+  static constexpr double ZMIN = 0.02;
   ///default value of max distance for object detection on the table
-  static const double ZMAX = 2.;
+  static constexpr double ZMAX = 2.;
   ///default value of the threshold of min points required to consider a cluster as valid
   static const int TH_POINTS = 400;
 
