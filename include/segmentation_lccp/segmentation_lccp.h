@@ -195,7 +195,7 @@ protected:
   ///value of concavity_tolerance_threshold of lccp algorithm
   double concavity_tolerance_threshold;
   ///value of smoothness_tolerance_threshold of lccp algorithm
-  double smoothness_tolerance_threshold;
+  double smoothness_threshold;
   ///value of min_segment_size of lccp algorithm
   int min_segment_size;
   ///value of use_extended_convexity of lccp algorithm
