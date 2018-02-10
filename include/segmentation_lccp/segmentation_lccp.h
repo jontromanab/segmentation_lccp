@@ -18,6 +18,7 @@
 #include<pcl/surface/concave_hull.h>
 
 #include<pcl/visualization/pcl_visualizer.h>
+#include<vtkPolyLine.h>
 
 ///typedefs
 typedef pcl::PointXYZRGBA PointT;
@@ -212,7 +213,7 @@ protected:
   int th_points;
 
   ///Vector of detected objects
-  std::vector<Object> detected_objects;
+  std::vector<Object> detected_objects_;
   ///Input cloud
   CloudPtr cloud_;
   ///Table plane cloud
@@ -224,7 +225,7 @@ protected:
   ///labeled voxel cloud
   CloudPtrl labeled_voxel_cloud_;
   ///map of supervoxel clusters
-  std::map<uint32_t, pcl::Supervoxel<pcl::PointXYZRGB>::Ptr> supervoxel_clusters_;
+  std::map<uint32_t, pcl::Supervoxel<PointT>::Ptr> supervoxel_clusters_;
   ///normal cloud
   pcl::PointCloud<pcl::PointNormal>::Ptr normal_cloud_;
   ///Coefficients of normal plane
@@ -283,6 +284,12 @@ public:
    * @param opt supervoxel parameters
    */
   void init(PointCloud input_cloud, supervoxel_parameters& opt);
+
+  /**
+   * @brief init initializer
+   * @param input_cloud input cloud
+   */
+  void init(PointCloud input_cloud);
 
   /**
    * @brief reset resets all public members

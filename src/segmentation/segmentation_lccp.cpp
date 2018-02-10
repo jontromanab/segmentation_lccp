@@ -96,21 +96,21 @@ void lccp_segmentation::reset(){
 
 void lccp_segmentation::print_parameters(){
   std::cout<< "\nsupervoxel_parameters: \n"
-                << "disable_transform: "<<(bool)this->disable_transform<<std::endl;
-                << "voxel_resolution: "<<(double)this->voxel_resolution<<std::endl;
-                << "seed_resolution:  "<<(double)this->seed_resolution<<std::endl;
-                << "color_importance: "<<(double)this->color_importance<<std::endl;
-                << "spatial_importance: "<<(double)this->spatial_importance<<std::endl;
-                << "normal_importance: "<<(double)this->normal_importance<<std::endl;
+                << "disable_transform: "<<(bool)this->disable_transform<<std::endl
+                << "voxel_resolution: "<<(double)this->voxel_resolution<<std::endl
+                << "seed_resolution:  "<<(double)this->seed_resolution<<std::endl
+                << "color_importance: "<<(double)this->color_importance<<std::endl
+                << "spatial_importance: "<<(double)this->spatial_importance<<std::endl
+                << "normal_importance: "<<(double)this->normal_importance<<std::endl
                 << "\n LCCP parameters \n"
-                << "concavity_tolerance_threshold: "<<(double)this->concavity_tolerance_threshold<<std::endl;
-                << "smoothness_threshold: "<<(double)this->smoothness_threshold<<std::endl;
-                << "min_segment_size: "<<(int)this->min_segment_size<<std::endl;
-                << "use_extended_convexity: "<<(bool)this->use_extended_convexity<<std::endl;
-                << "use_sanity_criterion: "<<(bool)this->use_sanity_criterion<<std::endl;
+                << "concavity_tolerance_threshold: "<<(double)this->concavity_tolerance_threshold<<std::endl
+                << "smoothness_threshold: "<<(double)this->smoothness_threshold<<std::endl
+                << "min_segment_size: "<<(int)this->min_segment_size<<std::endl
+                << "use_extended_convexity: "<<(bool)this->use_extended_convexity<<std::endl
+                << "use_sanity_criterion: "<<(bool)this->use_sanity_criterion<<std::endl
                 << "\n Other parameters \n"
-                << "zmin: "<<(double)this->zmin<<std::endl;
-                << "zmax: "<<(double)this->zmax<<std::endl;
+                << "zmin: "<<(double)this->zmin<<std::endl
+                << "zmax: "<<(double)this->zmax<<std::endl
                 << "th_points: "<<(int)this->th_points<<std::endl;
 }
 
@@ -226,15 +226,15 @@ double lccp_segmentation::get_smoothness_threshold(){
   return this->smoothness_threshold;
 }
 
-double lccp_segmentation::get_min_segment_size(){
+int lccp_segmentation::get_min_segment_size(){
   return this->min_segment_size;
 }
 
-double lccp_segmentation::get_use_extended_convexity(){
+bool lccp_segmentation::get_use_extended_convexity(){
   return this->use_extended_convexity;
 }
 
-double lccp_segmentation::get_use_sanity_criterion(){
+bool lccp_segmentation::get_use_sanity_criterion(){
   return this->use_sanity_criterion;
 }
 
@@ -246,6 +246,128 @@ double lccp_segmentation::get_zmax(){
   return this->zmax;
 }
 
-double lccp_segmentation::get_th_points(){
+int lccp_segmentation::get_th_points(){
   return this->th_points;
 }
+
+void lccp_segmentation::addSupervoxelConnectionsToViewer(PointT &supervoxel_center,
+                                                         PointCloud &adjacent_supervoxel_centers, std::string supervoxel_name, boost::shared_ptr<pcl::visualization::PCLVisualizer> &viewer){
+  vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+  vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
+  vtkSmartPointer<vtkPolyLine> polyLine = vtkSmartPointer<vtkPolyLine>::New();
+  //Iterate through all adjacent points, and add a center point to adjacent point pair
+  PointCloud::iterator adjacent_itr = adjacent_supervoxel_centers.begin();
+  for( ; adjacent_itr != adjacent_supervoxel_centers.end(); ++adjacent_itr){
+    points->InsertNextPoint(supervoxel_center.data);
+    points->InsertNextPoint(adjacent_itr->data);
+  }
+  //Create a polydata to store everything
+  vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
+  //Add the points to the dataset
+  polyData->SetPoints(points);
+  polyLine->GetPointIds()->SetNumberOfIds(points->GetNumberOfPoints());
+  for(unsigned int i = 0; i<points->GetNumberOfPoints();i++)
+    polyLine->GetPointIds()->SetId(i,i);
+  cells->InsertNextCell(polyLine);
+  //Add the lines to the dataset
+  polyData->SetLines(cells);
+  viewer->addModelFromPolyData(polyData, supervoxel_name);
+}
+
+void lccp_segmentation::detectObjectsOnTable(CloudPtr cloud, double zmin, double zmax, pcl::PointIndices::Ptr objectIndices, bool filter_input_cloud){
+  //objects for storing point clouds
+  CloudPtr plane(new PointCloud);
+  CloudPtr convexHull(new PointCloud);
+
+  //Get the plane model, if present
+  pcl::SACSegmentation<PointT> segmentation;
+  segmentation.setInputCloud(cloud);
+  segmentation.setModelType(pcl::SACMODEL_PLANE);
+  segmentation.setMethodType(pcl::SAC_RANSAC);
+  segmentation.setDistanceThreshold(0.01);
+  segmentation.setOptimizeCoefficients(true);
+  pcl::PointIndices::Ptr planeIndices(new pcl::PointIndices);
+  segmentation.segment(*planeIndices, this->plane_coefficients_);
+
+  if(planeIndices->indices.size() == 0)
+    std::cout<<"Could not find a plane in the scene."<<std::endl;
+  else{
+    //Copy the points of the plane to a new cloud
+    pcl::ExtractIndices<PointT> extract;
+    extract.setInputCloud(cloud);
+    extract.setIndices(planeIndices);
+    extract.filter(*plane);
+
+    //Retrive the convex hull
+    pcl::ConvexHull<PointT> hull;
+    hull.setInputCloud(plane);
+    hull.setDimension(2);
+    hull.reconstruct(*convexHull);
+
+    //redundant check
+    if(hull.getDimension() == 2){
+      //prism object
+      pcl::ExtractPolygonalPrismData<PointT> prism;
+      prism.setInputCloud(cloud);
+      prism.setInputPlanarHull(convexHull);
+      prism.setHeightLimits(zmin, zmax);
+      prism.segment(*objectIndices);
+      extract.setIndices(objectIndices);
+      if(filter_input_cloud)
+        extract.filter(*cloud);
+    }
+    else std::cout<<"The chosen hull is not planar."<<std::endl;
+    this->table_plane_cloud_ = plane;
+  }
+}
+
+
+void lccp_segmentation::show_table_plane(boost::shared_ptr<pcl::visualization::PCLVisualizer> &viewer){
+  pcl::visualization::PointCloudColorHandlerRGBField<PointT> rgb(this->table_plane_cloud_);
+  viewer->addPointCloud<PointT>(this->table_plane_cloud_, rgb, "table_plane_cloud");
+}
+
+void lccp_segmentation::show_segmented_objects(boost::shared_ptr<pcl::visualization::PCLVisualizer> &viewer){
+  pcl::PointCloud<PointTl> objects_cloud;
+  for(int i = 0; i < this->detected_objects_.size(); ++i){
+    pcl::PointCloud<PointTl> tmp_cloud;
+    for(int p = 0; p < this->detected_objects_[i].obj_cloud.size(); ++p){
+      PointTl tmp_point;
+      tmp_point.x = this->detected_objects_[i].obj_cloud[p].x;
+      tmp_point.y = this->detected_objects_[i].obj_cloud[p].y;
+      tmp_point.z = this->detected_objects_[i].obj_cloud[p].z;
+      tmp_point.label = this->detected_objects_[i].label;
+      tmp_cloud.points.push_back(tmp_point);
+    }
+    objects_cloud += tmp_cloud;
+  }
+  viewer->addPointCloud(objects_cloud.makeShared(), "segmented_object_cloud");
+}
+
+void lccp_segmentation::clean_viewer(boost::shared_ptr<pcl::visualization::PCLVisualizer> &viewer){
+  viewer->removePointCloud("supervoxel_cloud");
+  viewer->removePointCloud("supervoxel_normals");
+  viewer->removePointCloud("segemented_object_cloud");
+  viewer->removePointCloud("table_plane_cloud");
+  std::multimap<uint32_t, uint32_t>::iterator label_itr = (this->supervoxel_adjacency_).begin();
+  for( ; label_itr !=(this->supervoxel_adjacency_).end(); ){
+    uint32_t supervoxel_label = label_itr->first;
+    std::stringstream ss;
+    ss<<"supervoxel_"<<supervoxel_label;
+    viewer->removeShape(ss.str());
+    label_itr = (this->supervoxel_adjacency_).upper_bound(supervoxel_label);
+  }
+}
+
+std::vector<PointCloud> lccp_segmentation::get_segmented_objects_simple(){
+  std::vector<PointCloud> obj_vec;
+  for(int i = 0; i < this->detected_objects_.size(); ++i)
+    obj_vec.push_back(detected_objects_[i].obj_cloud);
+  return obj_vec;
+}
+
+
+
+
+
+
