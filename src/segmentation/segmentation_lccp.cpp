@@ -366,8 +366,129 @@ std::vector<PointCloud> lccp_segmentation::get_segmented_objects_simple(){
   return obj_vec;
 }
 
+std::vector<Object> lccp_segmentation::get_segmented_objects(){
+  return this->detected_objects_;
+}
 
+void lccp_segmentation::show_super_voxels(boost::shared_ptr<pcl::visualization::PCLVisualizer> &viewer, bool show_adjacency_map, bool show_super_voxel_normals){
+  if(this->detected_objects_.size()>0){
+    viewer->addPointCloud(this->labeled_voxel_cloud_, "supervoxel_cloud");
+    if(show_super_voxel_normals)
+      viewer->addPointCloudNormals<pcl::PointNormal>(this->normal_cloud_, 1, 0.05f, "supervoxel_normals");
+    if(show_adjacency_map){
+      std::multimap<uint32_t, uint32_t>::iterator label_itr = (this->supervoxel_adjacency_).begin();
+      for( ; label_itr!= (this->supervoxel_adjacency_).end(); ){
+        uint32_t supervoxel_label = label_itr->first;
+        pcl::Supervoxel<PointT>::Ptr supervoxel = this->supervoxel_clusters_.at(supervoxel_label);
+        PointCloud adjacent_supervoxel_centers;
+        std::multimap<uint32_t, uint32_t>::iterator adjacent_itr = this->supervoxel_adjacency_.equal_range(supervoxel_label).first;
+        for( ; adjacent_itr!=this->supervoxel_adjacency_.equal_range(supervoxel_label).second; ++adjacent_itr){
+          pcl::Supervoxel<PointT>::Ptr neighbor_supervoxel = this->supervoxel_clusters_.at(adjacent_itr->second);
+          adjacent_supervoxel_centers.push_back(neighbor_supervoxel->centroid_);
+        }
+        std::stringstream ss;
+        ss<<"supervoxel_"<<supervoxel_label;
+        addSupervoxelConnectionsToViewer(supervoxel->centroid_, adjacent_supervoxel_centers, ss.str(), viewer);
+        label_itr = (this->supervoxel_adjacency_).upper_bound(supervoxel_label);
+      }
+    }
+  }
+}
 
+void lccp_segmentation::show_super_voxels(boost::shared_ptr<pcl::visualization::PCLVisualizer> &viewer){
+  if(this->detected_objects_.size()>0){
+    viewer->addPointCloud(this->labeled_voxel_cloud_, "supervoxel_cloud");
+    viewer->addPointCloudNormals<pcl::PointNormal>(this->normal_cloud_, 1, 0.05f, "supervoxel_normals");
+    std::multimap<uint32_t, uint32_t>::iterator label_itr = (this->supervoxel_adjacency_).begin();
+    for( ; label_itr!= (this->supervoxel_adjacency_).end(); ){
+      uint32_t supervoxel_label = label_itr->first;
+      pcl::Supervoxel<PointT>::Ptr supervoxel = this->supervoxel_clusters_.at(supervoxel_label);
+      PointCloud adjacent_supervoxel_centers;
+      std::multimap<uint32_t, uint32_t>::iterator adjacent_itr = this->supervoxel_adjacency_.equal_range(supervoxel_label).first;
+      for( ; adjacent_itr!=this->supervoxel_adjacency_.equal_range(supervoxel_label).second; ++adjacent_itr){
+        pcl::Supervoxel<PointT>::Ptr neighbor_supervoxel = this->supervoxel_clusters_.at(adjacent_itr->second);
+        adjacent_supervoxel_centers.push_back(neighbor_supervoxel->centroid_);
+      }
+      std::stringstream ss;
+      ss<<"supervoxel_"<<supervoxel_label;
+      addSupervoxelConnectionsToViewer(supervoxel->centroid_, adjacent_supervoxel_centers, ss.str(), viewer);
+      label_itr = (this->supervoxel_adjacency_).upper_bound(supervoxel_label);
+    }
+  }
+}
 
+bool lccp_segmentation::segment(){
+  if(!this->initialized_){
+    pcl::console::print_error("No valid input given to the algorithm. The class has not been initialized");
+    return false;
+  }
+  pcl::PointIndices::Ptr obj_idx(new pcl::PointIndices());
+  detectObjectsOnTable(this->cloud_, this->zmin, this->zmax, obj_idx, true);
+  if(this->seed_resolution < 0.013)
+    pcl::console::print_warn("seed resolution very low, the segmentation could be fragmented.");
+  pcl::SupervoxelClustering<PointT> super(this->voxel_resolution, this->seed_resolution);
+  detected_objects_.resize(0);
+  if(this->cloud_->points.size() == 0){
+    pcl::console::print_warn("No objects on the table");
+    return false;
+  }
+  super.setInputCloud(this->cloud_);
+  super.setColorImportance(this->color_importance);
+  super.setSpatialImportance(this->spatial_importance);
+  super.setNormalImportance(this->normal_importance);
 
+  super.extract(supervoxel_clusters_);
+  labeled_voxel_cloud_ = super.getLabeledVoxelCloud();
+  CloudPtr voxel_cetroid_cloud = super.getVoxelCentroidCloud();
+  normal_cloud_ = super.makeSupervoxelNormalCloud(supervoxel_clusters_);
+  PointCloudl::Ptr full_labeled_cloud = super.getLabeledCloud();
+  super.getSupervoxelAdjacency(supervoxel_adjacency_);
+  std::map<uint32_t, pcl::Supervoxel<PointT>::Ptr> refined_supervoxel_clusters;
 
+  PointCloudl::Ptr refined_labeled_voxel_cloud = super.getLabeledVoxelCloud();
+  pcl::PointCloud<pcl::PointNormal>::Ptr refined_sv_normal_cloud = super.makeSupervoxelNormalCloud(refined_supervoxel_clusters);
+  PointCloudl::Ptr refined_full_labeled_cloud = super.getLabeledCloud();
+
+  typedef boost::adjacency_list<boost::setS, boost::setS, boost::undirectedS, uint32_t, float> VoxelAdjacencyList;
+  VoxelAdjacencyList supervoxel_adjacency_list;
+  super.getSupervoxelAdjacencyList(supervoxel_adjacency_list);
+
+  uint k_factor = 0;
+  if(use_extended_convexity)
+    k_factor = 1;
+
+  pcl::LCCPSegmentation<PointT> lccp;
+  lccp.setConcavityToleranceThreshold(this->concavity_tolerance_threshold);
+  lccp.setSanityCheck(this->use_sanity_criterion);
+  lccp.setSmoothnessCheck(true, this->voxel_resolution, this->seed_resolution, this->smoothness_threshold);
+  lccp.setKFactor(k_factor);
+  lccp.setInputSupervoxels(this->supervoxel_clusters_, this->supervoxel_adjacency_);
+  lccp.setMinSegmentSize(this->min_segment_size);
+  lccp.segment();
+
+  PointCloudl::Ptr labeled_cloud = super.getLabeledCloud();
+  lccp_labeled_cloud_ = labeled_cloud->makeShared();
+  lccp.relabelCloud(*lccp_labeled_cloud_);
+
+  for(int i=0;i < lccp_labeled_cloud_->points.size(); ++i){
+    uint32_t idx = lccp_labeled_cloud_->points.at(i).label;
+    if(idx >= detected_objects_.size())
+      detected_objects_.resize(idx+1);
+    PointT tmp_point_rgb;
+    tmp_point_rgb = cloud_->points.at(i);
+    detected_objects_[idx].obj_cloud.points.push_back(tmp_point_rgb);
+    detected_objects_[idx].label = (int)idx;
+  }
+
+  int size = detected_objects_.size();
+  int i = 0;
+  while(i<size){
+    if(detected_objects_[i].obj_cloud.size() < this->th_points){
+      detected_objects_.erase(detected_objects_.begin()+i);
+      size = detected_objects_.size();
+    }
+    else
+      i++;
+  }
+  return true;
+}
