@@ -32,11 +32,16 @@ IF (PCL_FOUND)
   ADD_DEFINITIONS(${PCL_DEFINITIONS})
 ENDIF (PCL_FOUND)
 
+
 include_directories(include ${catkin_INCLUDE_DIRS} ${PCL_INCLUDE_DIR} )
 
 
 add_library(segmentation_lccp src/segmentation/segmentation_lccp.cpp)
-target_link_libraries(segmentation_lccp ${catkin_LIBRARIES} ${PCL_LIBRARY_DIRS} )
+target_link_libraries(segmentation_lccp ${catkin_LIBRARIES} ${PCL_LIBRARY_DIRS})
+install(TARGETS segmentation_lccp
+ ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+ LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
 
 #############
 ## Testing ##
@@ -53,4 +58,4 @@ target_link_libraries(segmentation_lccp ${catkin_LIBRARIES} ${PCL_LIBRARY_DIRS} 
 
 add_executable(test_lccp_algorithm src/test/test_lccp_algorithm.cpp)
 add_dependencies(test_lccp_algorithm ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(test_lccp_algorithm segmentation_lccp ${catkin_LIBRARIES})
+target_link_libraries(test_lccp_algorithm segmentation_lccp ${catkin_LIBRARIES} ${PCL_LIBRARIES})

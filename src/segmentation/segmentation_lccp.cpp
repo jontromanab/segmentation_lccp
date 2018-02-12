@@ -369,7 +369,7 @@ std::vector<PointCloud> lccp_segmentation::get_segmented_objects_simple(){
 std::vector<Object> lccp_segmentation::get_segmented_objects(){
   return this->detected_objects_;
 }
-
+/*
 void lccp_segmentation::show_super_voxels(boost::shared_ptr<pcl::visualization::PCLVisualizer> &viewer, bool show_adjacency_map, bool show_super_voxel_normals){
   if(this->detected_objects_.size()>0){
     viewer->addPointCloud(this->labeled_voxel_cloud_, "supervoxel_cloud");
@@ -416,7 +416,7 @@ void lccp_segmentation::show_super_voxels(boost::shared_ptr<pcl::visualization::
     }
   }
 }
-
+*/
 bool lccp_segmentation::segment(){
   if(!this->initialized_){
     pcl::console::print_error("No valid input given to the algorithm. The class has not been initialized");
