@@ -50,3 +50,7 @@ target_link_libraries(segmentation_lccp ${catkin_LIBRARIES} ${PCL_LIBRARY_DIRS} 
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+add_executable(test_lccp_algorithm src/test/test_lccp_algorithm.cpp)
+add_dependencies(test_lccp_algorithm ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(test_lccp_algorithm segmentation_lccp ${catkin_LIBRARIES})
