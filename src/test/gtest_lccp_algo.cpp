@@ -47,8 +47,15 @@ TEST(LccpAlgo, checkDefaultParams){
   EXPECT_FLOAT_EQ(0.02, seg->get_zmin());
   EXPECT_FLOAT_EQ(2.0, seg->get_zmax());
   EXPECT_EQ(400, seg->get_th_points());
-
-
+  std::vector<Object> seg_objs;
+  seg->segment();
+  //table plane cloud size should be less than whole cloud
+  pcl::PointCloud<pcl::PointXYZRGBA>::Ptr table_cloud(new pcl::PointCloud<pcl::PointXYZRGBA>);
+  table_cloud = seg->get_plane_cloud();
+  EXPECT_TRUE(cloud->points.size() > table_cloud->points.size());
+  //There should be atleast 1 object
+  seg_objs = seg->get_segmented_objects();
+  EXPECT_TRUE(seg_objs.size()>=1);
 }
 
 
