@@ -47,14 +47,9 @@ install(TARGETS segmentation_lccp
 ## Testing ##
 #############
 
-## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_segmentation_lccp.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
+catkin_add_gtest(gtest_lccp_algo src/test/gtest_lccp_algo.cpp)
+target_link_libraries(gtest_lccp_algo segmentation_lccp ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
 
 add_executable(test_lccp_algorithm src/test/test_lccp_algorithm.cpp)
 add_dependencies(test_lccp_algorithm ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
