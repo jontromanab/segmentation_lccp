@@ -17,11 +17,23 @@ find_package(catkin REQUIRED COMPONENTS
 # find_package(Boost REQUIRED COMPONENTS system)
 find_package(PCL 1.8 REQUIRED)
 
+add_service_files(
+   FILES
+   segmentation.srv
+)
+
+generate_messages(
+   DEPENDENCIES
+   sensor_msgs
+)
+
+
 catkin_package(
   INCLUDE_DIRS
       include
   LIBRARIES
       segmentation_lccp
+      segmentation_lccp_node
   CATKIN_DEPENDS roscpp
   DEPENDS system_lib
 )
@@ -37,8 +49,10 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${PCL_INCLUDE_DIR} )
 
 
 add_library(segmentation_lccp src/segmentation/segmentation_lccp.cpp)
+add_library(segmentation_lccp_node src/segmentation/segmentation_lccp_node.cpp)
 target_link_libraries(segmentation_lccp ${catkin_LIBRARIES} ${PCL_LIBRARY_DIRS})
-install(TARGETS segmentation_lccp
+target_link_libraries(segmentation_lccp_node ${catkin_LIBRARIES} ${PCL_LIBRARY_DIRS})
+install(TARGETS segmentation_lccp segmentation_lccp_node
  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
