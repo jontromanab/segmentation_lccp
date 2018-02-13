@@ -195,7 +195,7 @@ void lccp_segmentation::set_th_points(int th_points_in){
 }
 
 bool lccp_segmentation::get_disable_transform(){
-  return this->get_disable_transform();
+  return this->disable_transform;
 }
 
 double lccp_segmentation::get_voxel_resolution(){
