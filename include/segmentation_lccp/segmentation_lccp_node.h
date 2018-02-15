@@ -11,6 +11,7 @@
 class LccpSegmentationAlgorithm
 {
 public:
+  LccpSegmentationAlgorithm();
 private:
   ros::ServiceServer segmentation_server_;
   bool segmentationCallback(segmentation_lccp::segmentation::Request& req,
