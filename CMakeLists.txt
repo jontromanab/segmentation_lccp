@@ -60,11 +60,11 @@ install(TARGETS segmentation_lccp segmentation_lccp_ros
 
 add_executable(segmentation_lccp_server src/nodes/segmentation_lccp_server.cpp)
 add_dependencies(segmentation_lccp_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(segmentation_lccp_server ${catkin_LIBRARIES})
+target_link_libraries(segmentation_lccp_server segmentation_lccp_ros ${catkin_LIBRARIES})
 
 add_executable(segmentation_lccp_client src/nodes/segmentation_lccp_client.cpp)
 add_dependencies(segmentation_lccp_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(segmentation_lccp_client ${catkin_LIBRARIES})
+target_link_libraries(segmentation_lccp_client segmentation_lccp_ros ${catkin_LIBRARIES})
 
 #############
 ## Testing ##

@@ -13,7 +13,7 @@
 class LccpSegmentationAlgorithm
 {
 public:
-  LccpSegmentationAlgorithm(std::string name);
+  LccpSegmentationAlgorithm(ros::NodeHandle* handle, std::string name);
 private:
   ros::ServiceServer segmentation_server_;
   bool segmentationCallback(segmentation_lccp::segmentation::Request& req,
