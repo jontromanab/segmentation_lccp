@@ -2,7 +2,7 @@
 
 LccpSegmentationAlgorithm::LccpSegmentationAlgorithm(ros::NodeHandle* handle, std::string name):
   nh_(*handle), service_name_(name){
-  std::cout<<"I am strating service"<<std::endl;
+  std::cout<<"I am starting service"<<std::endl;
   segmentation_server_ = nh_.advertiseService(service_name_, &LccpSegmentationAlgorithm::segmentationCallback,
                                               this);
 }
@@ -16,7 +16,11 @@ bool LccpSegmentationAlgorithm::segmentationCallback(segmentation_lccp::segmenta
     pcl::fromPCLPointCloud2(pcl_pc2,*cloud);
     lccp_segmentation* seg = new lccp_segmentation();
     seg->init(*cloud);
-    seg->print_parameters();
+    //seg->print_parameters();
+    std::vector<Object> seg_objs;
+    seg->segment();
+    seg_objs = seg->get_segmented_objects();
+    std::cout<<"\n Detected "<<seg_objs.size()<<" Objects.\n\n";
 
 }
 
