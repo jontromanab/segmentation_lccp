@@ -33,7 +33,6 @@ catkin_package(
       include
   LIBRARIES
       segmentation_lccp
-      segmentation_lccp_node
   CATKIN_DEPENDS roscpp
   DEPENDS system_lib
 )
@@ -49,13 +48,21 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${PCL_INCLUDE_DIR} )
 
 
 add_library(segmentation_lccp src/segmentation/segmentation_lccp.cpp)
-add_library(segmentation_lccp_node src/segmentation/segmentation_lccp_node.cpp)
+
 target_link_libraries(segmentation_lccp ${catkin_LIBRARIES} ${PCL_LIBRARY_DIRS})
-target_link_libraries(segmentation_lccp_node ${catkin_LIBRARIES} ${PCL_LIBRARY_DIRS})
-install(TARGETS segmentation_lccp segmentation_lccp_node
+
+install(TARGETS segmentation_lccp
  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
+
+add_executable(segmentation_lccp_node src/segmentation/segmentation_lccp_node.cpp)
+add_dependencies(segmentation_lccp_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(segmentation_lccp_node segmentation_lccp ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+
+add_executable(segmentation_lccp_client src/segmentation/segmentation_lccp_client.cpp)
+add_dependencies(segmentation_lccp_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(segmentation_lccp_client ${catkin_LIBRARIES})
 
 #############
 ## Testing ##
