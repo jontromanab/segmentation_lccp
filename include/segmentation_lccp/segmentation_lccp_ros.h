@@ -5,6 +5,9 @@
 #include<sensor_msgs/PointCloud2.h>
 #include<segmentation_lccp/segmentation.h>
 #include<ros/ros.h>
+#include<pcl_conversions/pcl_conversions.h>
+#include<pcl/point_cloud.h>
+#include<pcl/point_types.h>
 
 /**
  * \brief Wrapper ROS class to obtain segmented objects by a service request
@@ -21,7 +24,6 @@ private:
 
   ros::NodeHandle nh_;
   std::string service_name_;
-
 
 };
 

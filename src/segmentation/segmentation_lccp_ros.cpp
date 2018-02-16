@@ -10,6 +10,13 @@ LccpSegmentationAlgorithm::LccpSegmentationAlgorithm(ros::NodeHandle* handle, st
 bool LccpSegmentationAlgorithm::segmentationCallback(segmentation_lccp::segmentation::Request &req,
                                                      segmentation_lccp::segmentation::Response &res){
     std::cout<<"I am a server"<<std::endl;
+    pcl::PCLPointCloud2 pcl_pc2;
+    pcl_conversions::toPCL(req.input_cloud, pcl_pc2);
+    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGBA>);
+    pcl::fromPCLPointCloud2(pcl_pc2,*cloud);
+    lccp_segmentation* seg = new lccp_segmentation();
+    seg->init(*cloud);
+    seg->print_parameters();
 
 }
 

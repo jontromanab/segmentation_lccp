@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   pcl_conversions
   pcl_ros
   roscpp
+  sensor_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -33,6 +34,7 @@ catkin_package(
       include
   LIBRARIES
       segmentation_lccp
+      segmentation_lccp_ros
   CATKIN_DEPENDS roscpp
   DEPENDS system_lib
 )
@@ -51,7 +53,7 @@ add_library(segmentation_lccp src/segmentation/segmentation_lccp.cpp)
 add_library(segmentation_lccp_ros src/segmentation/segmentation_lccp_ros.cpp)
 
 target_link_libraries(segmentation_lccp ${catkin_LIBRARIES} ${PCL_LIBRARY_DIRS})
-target_link_libraries(segmentation_lccp_ros ${catkin_LIBRARIES} ${PCL_LIBRARY_DIRS})
+target_link_libraries(segmentation_lccp_ros segmentation_lccp ${catkin_LIBRARIES} ${PCL_LIBRARY_DIRS})
 
 install(TARGETS segmentation_lccp segmentation_lccp_ros
  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
