@@ -77,8 +77,8 @@ int main(int argc, char** argv){
 
   seg.show_table_plane(viewer);
   seg.show_segmented_objects(viewer);
-  bool show_adjacency_map = true;
-  bool show_super_voxel_normals = false;
+  //bool show_adjacency_map = true;
+  //bool show_super_voxel_normals = false;
   //seg.show_super_voxels(viewer, show_adjacency_map, show_super_voxel_normals);
 
   std::cout<<"Press 'n' to close\n";

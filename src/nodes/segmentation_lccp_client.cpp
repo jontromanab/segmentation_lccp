@@ -1,6 +1,9 @@
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <segmentation_lccp/segmentation.h>
+#include<pcl_conversions/pcl_conversions.h>
+#include<pcl/point_cloud.h>
+#include<pcl/point_types.h>
 
 
 
@@ -20,7 +23,7 @@ private:
 SegmentationClient::SegmentationClient(ros::NodeHandle *nodeHandle):nh_(*nodeHandle){
   ROS_INFO("Constructor client");
   sub_ = nh_.subscribe(cloud_topic_, 1, &SegmentationClient::cloudCallback, this);
-  table_cloud_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("table",1000);
+  table_cloud_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("table",10);
 }
 
 void SegmentationClient::cloudCallback(const sensor_msgs::PointCloud2& msg){
@@ -28,8 +31,9 @@ void SegmentationClient::cloudCallback(const sensor_msgs::PointCloud2& msg){
   ros::ServiceClient client = nh_.serviceClient<segmentation_lccp::segmentation>(segmentation_service_);
   segmentation_lccp::segmentation srv;
   srv.request.input_cloud = msg;
+  std::cout<<"Input cloud ros has: "<<srv.request.input_cloud.data.size()<<std::endl;
   client.call(srv);
-  std::cout<<"Table has: "<<srv.response.plane_cloud.data.size()<<std::endl;
+  std::cout<<"Table cloud ros has: "<<srv.response.plane_cloud.data.size()<<std::endl;
   table_cloud_pub_.publish(srv.response.plane_cloud);
 }
 
