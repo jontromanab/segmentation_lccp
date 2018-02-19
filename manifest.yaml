@@ -1,0 +1,23 @@
+actions: []
+authors: ''
+brief: ''
+bugtracker: ''
+depends:
+- pcl_conversions
+- roscpp
+- std_msgs
+- message_runtime
+- sensor_msgs
+- message_generation
+- catkin
+- libpcl-all
+- pcl_ros
+description: The segmentation_lccp package
+license: TODO
+maintainers: root <root@todo.todo>
+msgs: []
+package_type: package
+repo_url: ''
+srvs:
+- segmentation
+url: ''
