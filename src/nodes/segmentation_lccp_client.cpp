@@ -19,6 +19,7 @@ private:
   std::string segmentation_service_ = "segmentation_service";
   ros::Subscriber sub_;
   ros::Publisher table_cloud_pub_;
+  ros::Publisher object_cloud_pub_;
   sensor_msgs::PointCloud2 table_cloud_ros_;
   sensor_msgs::PointCloud2 object_cloud_ros_;
 };
@@ -27,6 +28,7 @@ SegmentationClient::SegmentationClient(ros::NodeHandle *nodeHandle):nh_(*nodeHan
   ROS_INFO("Constructor client");
   sub_ = nh_.subscribe(cloud_topic_, 1, &SegmentationClient::cloudCallback, this);
   table_cloud_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("table",10);
+  object_cloud_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("objects",10);
 }
 
 void SegmentationClient::cloudCallback(const sensor_msgs::PointCloud2& msg){
@@ -36,17 +38,40 @@ void SegmentationClient::cloudCallback(const sensor_msgs::PointCloud2& msg){
   srv.request.input_cloud = msg;
   if(client.call(srv)){
     table_cloud_ros_ = srv.response.plane_cloud;
-    std::cout<<"I am calling service"<<std::endl;
-    std::cout<<"Table cloud has: "<<table_cloud_ros_.data.size()<<std::endl;
+    std::cout<<"We have: "<<srv.response.object_cloud.size()<<" objects"<<std::endl;
+    pcl::PointCloud<pcl::PointXYZRGB> segmented_objects_cloud;
+    for(int i=0;i<srv.response.object_cloud.size();++i){
+      pcl::PointCloud<pcl::PointXYZRGB> tmp;
+      pcl::fromROSMsg(srv.response.object_cloud[i], tmp);
+      float r = static_cast<float> (rand())/static_cast<float>(RAND_MAX);
+      float g = static_cast<float> (rand())/static_cast<float>(RAND_MAX);
+      float b = static_cast<float> (rand())/static_cast<float>(RAND_MAX);
+      for(int j=0;j<tmp.points.size();++j){
+        pcl::PointXYZRGB temp_point;
+        temp_point.x = tmp.points.at(j).x;
+        temp_point.y = tmp.points.at(j).y;
+        temp_point.z = tmp.points.at(j).z;
+        temp_point.r = r * 255;
+        temp_point.g = g * 255;
+        temp_point.b = b * 255;
+        segmented_objects_cloud.points.push_back(temp_point);
+      }
+    }
+    segmented_objects_cloud.width = segmented_objects_cloud.points.size();
+    segmented_objects_cloud.height =1;
+    segmented_objects_cloud.is_dense = true;
+    pcl::toROSMsg(segmented_objects_cloud, object_cloud_ros_);
+    object_cloud_ros_.header.seq = 1;
+    object_cloud_ros_.header.frame_id = msg.header.frame_id;
+    object_cloud_ros_.header.stamp = ros::Time::now();
     publishClouds();
   }
 }
 
 void SegmentationClient::publishClouds(){
   table_cloud_pub_.publish(table_cloud_ros_);
+  object_cloud_pub_.publish(object_cloud_ros_);
 }
-
-
 
 
 int main(int argc, char **argv)
