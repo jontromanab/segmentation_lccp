@@ -2,7 +2,7 @@
 
 LccpSegmentationAlgorithm::LccpSegmentationAlgorithm(ros::NodeHandle* handle, std::string name):
   nh_(*handle), service_name_(name){
-  std::cout<<"I am starting service"<<std::endl;
+  ROS_INFO("Segmentation service started");
   segmentation_server_ = nh_.advertiseService(service_name_, &LccpSegmentationAlgorithm::segmentationCallback,
                                               this);
 }
@@ -16,7 +16,6 @@ bool LccpSegmentationAlgorithm::segmentationCallback(segmentation_lccp::segmenta
     std::vector<Object> seg_objs;
     seg->segment();
     seg_objs = seg->get_segmented_objects();
-    std::cout<<"\n Detected "<<seg_objs.size()<<" Objects.\n\n";
 
     //Table cloud
     CloudPtr table_cloud = seg->get_plane_cloud();

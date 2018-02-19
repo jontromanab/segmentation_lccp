@@ -25,20 +25,17 @@ private:
 };
 
 SegmentationClient::SegmentationClient(ros::NodeHandle *nodeHandle):nh_(*nodeHandle){
-  ROS_INFO("Constructor client");
   sub_ = nh_.subscribe(cloud_topic_, 1, &SegmentationClient::cloudCallback, this);
   table_cloud_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("table",10);
   object_cloud_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("objects",10);
 }
 
 void SegmentationClient::cloudCallback(const sensor_msgs::PointCloud2& msg){
-  ROS_INFO("I am receiving cloud");
   ros::ServiceClient client = nh_.serviceClient<segmentation_lccp::segmentation>(segmentation_service_);
   segmentation_lccp::segmentation srv;
   srv.request.input_cloud = msg;
   if(client.call(srv)){
     table_cloud_ros_ = srv.response.plane_cloud;
-    std::cout<<"We have: "<<srv.response.object_cloud.size()<<" objects"<<std::endl;
     pcl::PointCloud<pcl::PointXYZRGB> segmented_objects_cloud;
     for(int i=0;i<srv.response.object_cloud.size();++i){
       pcl::PointCloud<pcl::PointXYZRGB> tmp;
