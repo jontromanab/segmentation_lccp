@@ -1,8 +1,22 @@
 #include<segmentation_lccp/segmentation_lccp_ros.h>
 
-LccpSegmentationAlgorithm::LccpSegmentationAlgorithm(ros::NodeHandle* handle, std::string name):
+LccpSegmentationAlgorithm::LccpSegmentationAlgorithm(ros::NodeHandle* handle, const Parameters& param, std::string name):
   nh_(*handle), service_name_(name){
   ROS_INFO("Segmentation service started");
+  this->param_.zmin = param.zmin;
+  this->param_.zmax = param.zmax;
+  this->param_.th_points = param.th_points;
+  this->param_.disable_transform = param.disable_transform;
+  this->param_.voxel_resolution = param.voxel_resolution;
+  this->param_.seed_resolution = param.seed_resolution;
+  this->param_.color_importance = param.color_importance;
+  this->param_.spatial_importance = param.spatial_importance;
+  this->param_.normal_importance = param.normal_importance;
+  this->param_.concavity_tolerance_threshold = param.concavity_tolerance_threshold;
+  this->param_.smoothness_threshold = param.smoothness_threshold;
+  this->param_.min_segment_size = param.min_segment_size;
+  this->param_.use_extended_convexity = param.use_extended_convexity;
+  this->param_.use_sanity_criterion = param.use_sanity_criterion;
   segmentation_server_ = nh_.advertiseService(service_name_, &LccpSegmentationAlgorithm::segmentationCallback,
                                               this);
 }
@@ -12,7 +26,7 @@ bool LccpSegmentationAlgorithm::segmentationCallback(segmentation_lccp::segmenta
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGBA>);
     pcl::fromROSMsg(req.input_cloud, *cloud);
     std::unique_ptr<lccp_segmentation> seg(new lccp_segmentation);
-    seg->init(*cloud);
+    seg->init(*cloud, this->param_);
     std::vector<Object> seg_objs;
     seg->segment();
     seg_objs = seg->get_segmented_objects();

@@ -21,6 +21,7 @@
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
@@ -35,11 +36,17 @@
 
 <p><code>#include &lt;<a class="el" href="segmentation__lccp__ros_8h_source.html">segmentation_lccp_ros.h</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structLccpSegmentationAlgorithm_1_1Parameters.html">Parameters</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="structLccpSegmentationAlgorithm_1_1Parameters.html" title="The Parameters struct contains parameters of the algorithm. ">Parameters</a> struct contains parameters of the algorithm.  <a href="structLccpSegmentationAlgorithm_1_1Parameters.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a56561805ce002d5114f66f9681adf248"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLccpSegmentationAlgorithm.html#a56561805ce002d5114f66f9681adf248">LccpSegmentationAlgorithm</a> (ros::NodeHandle *handle, std::string name)</td></tr>
-<tr class="memdesc:a56561805ce002d5114f66f9681adf248"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a56561805ce002d5114f66f9681adf248">More...</a><br /></td></tr>
-<tr class="separator:a56561805ce002d5114f66f9681adf248"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c723c8ec7dcb01dc94d09d355cacf34"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLccpSegmentationAlgorithm.html#a8c723c8ec7dcb01dc94d09d355cacf34">LccpSegmentationAlgorithm</a> (ros::NodeHandle *handle, const <a class="el" href="structLccpSegmentationAlgorithm_1_1Parameters.html">Parameters</a> &amp;param, std::string name)</td></tr>
+<tr class="memdesc:a8c723c8ec7dcb01dc94d09d355cacf34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a8c723c8ec7dcb01dc94d09d355cacf34">More...</a><br /></td></tr>
+<tr class="separator:a8c723c8ec7dcb01dc94d09d355cacf34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
@@ -52,6 +59,9 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a1f1711c76a26dadf61253f70f95fb9db"><td class="memItemLeft" align="right" valign="top">ros::NodeHandle&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLccpSegmentationAlgorithm.html#a1f1711c76a26dadf61253f70f95fb9db">nh_</a></td></tr>
 <tr class="memdesc:a1f1711c76a26dadf61253f70f95fb9db"><td class="mdescLeft">&#160;</td><td class="mdescRight">NodeHandle.  <a href="#a1f1711c76a26dadf61253f70f95fb9db">More...</a><br /></td></tr>
 <tr class="separator:a1f1711c76a26dadf61253f70f95fb9db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a399b9c2088c32b3b82f879c325cf43e8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classsupervoxel__parameters.html">supervoxel_parameters</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLccpSegmentationAlgorithm.html#a399b9c2088c32b3b82f879c325cf43e8">param_</a></td></tr>
+<tr class="memdesc:a399b9c2088c32b3b82f879c325cf43e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Segmentation parameters.  <a href="#a399b9c2088c32b3b82f879c325cf43e8">More...</a><br /></td></tr>
+<tr class="separator:a399b9c2088c32b3b82f879c325cf43e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a30b6ff57611d23566d3bf558e33ed0aa"><td class="memItemLeft" align="right" valign="top">ros::ServiceServer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLccpSegmentationAlgorithm.html#a30b6ff57611d23566d3bf558e33ed0aa">segmentation_server_</a></td></tr>
 <tr class="memdesc:a30b6ff57611d23566d3bf558e33ed0aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">server  <a href="#a30b6ff57611d23566d3bf558e33ed0aa">More...</a><br /></td></tr>
 <tr class="separator:a30b6ff57611d23566d3bf558e33ed0aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -64,7 +74,7 @@ Private Attributes</h2></td></tr>
 
 <p>Definition at line <a class="el" href="segmentation__lccp__ros_8h_source.html#l00016">16</a> of file <a class="el" href="segmentation__lccp__ros_8h_source.html">segmentation_lccp_ros.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a56561805ce002d5114f66f9681adf248"></a>
+<a class="anchor" id="a8c723c8ec7dcb01dc94d09d355cacf34"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -73,6 +83,12 @@ Private Attributes</h2></td></tr>
           <td>(</td>
           <td class="paramtype">ros::NodeHandle *&#160;</td>
           <td class="paramname"><em>handle</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structLccpSegmentationAlgorithm_1_1Parameters.html">Parameters</a> &amp;&#160;</td>
+          <td class="paramname"><em>param</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -137,7 +153,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>if service successful </dd></dl>
 
-<p>Definition at line <a class="el" href="segmentation__lccp__ros_8cpp_source.html#l00010">10</a> of file <a class="el" href="segmentation__lccp__ros_8cpp_source.html">segmentation_lccp_ros.cpp</a>.</p>
+<p>Definition at line <a class="el" href="segmentation__lccp__ros_8cpp_source.html#l00024">24</a> of file <a class="el" href="segmentation__lccp__ros_8cpp_source.html">segmentation_lccp_ros.cpp</a>.</p>
 
 </div>
 </div>
@@ -162,7 +178,31 @@ Private Attributes</h2></td></tr>
 
 <p>NodeHandle. </p>
 
-<p>Definition at line <a class="el" href="segmentation__lccp__ros_8h_source.html#l00037">37</a> of file <a class="el" href="segmentation__lccp__ros_8h_source.html">segmentation_lccp_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="segmentation__lccp__ros_8h_source.html#l00058">58</a> of file <a class="el" href="segmentation__lccp__ros_8h_source.html">segmentation_lccp_ros.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a399b9c2088c32b3b82f879c325cf43e8"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classsupervoxel__parameters.html">supervoxel_parameters</a> LccpSegmentationAlgorithm::param_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Segmentation parameters. </p>
+
+<p>Definition at line <a class="el" href="segmentation__lccp__ros_8h_source.html#l00064">64</a> of file <a class="el" href="segmentation__lccp__ros_8h_source.html">segmentation_lccp_ros.h</a>.</p>
 
 </div>
 </div>
@@ -186,7 +226,7 @@ Private Attributes</h2></td></tr>
 
 <p>server </p>
 
-<p>Definition at line <a class="el" href="segmentation__lccp__ros_8h_source.html#l00025">25</a> of file <a class="el" href="segmentation__lccp__ros_8h_source.html">segmentation_lccp_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="segmentation__lccp__ros_8h_source.html#l00046">46</a> of file <a class="el" href="segmentation__lccp__ros_8h_source.html">segmentation_lccp_ros.h</a>.</p>
 
 </div>
 </div>
@@ -210,7 +250,7 @@ Private Attributes</h2></td></tr>
 
 <p>Name of service. </p>
 
-<p>Definition at line <a class="el" href="segmentation__lccp__ros_8h_source.html#l00040">40</a> of file <a class="el" href="segmentation__lccp__ros_8h_source.html">segmentation_lccp_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="segmentation__lccp__ros_8h_source.html#l00061">61</a> of file <a class="el" href="segmentation__lccp__ros_8h_source.html">segmentation_lccp_ros.h</a>.</p>
 
 </div>
 </div>
@@ -224,7 +264,7 @@ Private Attributes</h2></td></tr>
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/segmentation_lccp">segmentation_lccp</a><br />
 Author(s): </br />
-<small>autogenerated on Sun Feb 18 2018 23:01:53</small>
+<small>autogenerated on Mon Feb 19 2018 02:01:24</small>
 </div>
 </body>
 </html>

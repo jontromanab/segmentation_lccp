@@ -17,9 +17,30 @@ class LccpSegmentationAlgorithm
 {
 public:
   /**
+   * @brief The Parameters struct contains parameters of the algorithm
+   */
+  struct Parameters{
+    double zmin;
+    double zmax;
+    int th_points;
+    //superVoxel parameters
+    bool disable_transform;
+    double voxel_resolution;
+    double seed_resolution;
+    double color_importance;
+    double spatial_importance;
+    double normal_importance;
+    //LCCP segmentation parameters
+    double concavity_tolerance_threshold;
+    double smoothness_threshold;
+    int min_segment_size;
+    bool use_extended_convexity;
+    bool use_sanity_criterion;
+  };
+  /**
    * @brief Constructor
    */
-  LccpSegmentationAlgorithm(ros::NodeHandle* handle, std::string name);
+  LccpSegmentationAlgorithm(ros::NodeHandle* handle, const Parameters& param, std::string name);
 private:
   ///server
   ros::ServiceServer segmentation_server_;
@@ -38,6 +59,9 @@ private:
 
   ///Name of service
   std::string service_name_;
+
+  ///Segmentation parameters
+  supervoxel_parameters param_;
 
 };
 
