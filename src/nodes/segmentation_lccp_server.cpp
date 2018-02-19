@@ -1,13 +1,13 @@
 #include <ros/ros.h>
 #include <segmentation_lccp/segmentation_lccp_ros.h>
 
-std::string segmentation_service = "segmentation_service";
-static const double VOXEL_RESOLUTION = 0.0015f;
+//std::string segmentation_service = "segmentation_service";
 
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "segmentation_lccp_server");
   ros::NodeHandle nh;
+  std::string segmentation_service;
   LccpSegmentationAlgorithm::Parameters params;
   nh.getParam("segmentation_server/zmax", params.zmax);
   nh.getParam("segmentation_server/zmin", params.zmin);
@@ -23,6 +23,8 @@ int main(int argc, char **argv)
   nh.getParam("segmentation_server/concavity_tolerance_threshold", params.concavity_tolerance_threshold);
   nh.getParam("segmentation_server/smoothness_threshold", params.smoothness_threshold);
   nh.getParam("segmentation_server/min_segment_size", params.min_segment_size);
+  nh.getParam("segmentation_server/segmentation_service", segmentation_service);
+
   LccpSegmentationAlgorithm seg(&nh, params, segmentation_service);
   ros::spin();
   return 0;

@@ -1,6 +1,6 @@
 <launch>
 
-   <!--Now apply segementation to remove table plane and generate clustered objects -->
+  <arg name = "segmentation_service" value="segmentation_service" />
   <node name ="segmentation_server" pkg="segmentation_lccp" type="segmentation_lccp_server" output="screen">
       <param name="zmax" value="2.0" />
       <param name="zmin" value="0.02" />
@@ -20,6 +20,8 @@
       <param name="concavity_tolerance_threshold" value="10" />
       <param name="smoothness_threshold" value="0.1" />
       <param name="min_segment_size" value="3" />
+
+      <param name="segmentation_service" value="$(arg segmentation_service)"/>
 
   </node>
 
