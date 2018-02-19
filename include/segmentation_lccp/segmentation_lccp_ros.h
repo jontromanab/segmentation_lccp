@@ -16,13 +16,27 @@
 class LccpSegmentationAlgorithm
 {
 public:
+  /**
+   * @brief Constructor
+   */
   LccpSegmentationAlgorithm(ros::NodeHandle* handle, std::string name);
 private:
+  ///server
   ros::ServiceServer segmentation_server_;
+
+  /**
+   * @brief segmentationCallback Callback function to server
+   * @param req input cloud
+   * @param res table cloud and vector of objects clouds
+   * @return if service successful
+   */
   bool segmentationCallback(segmentation_lccp::segmentation::Request& req,
                             segmentation_lccp::segmentation::Response& res);
 
+  ///NodeHandle
   ros::NodeHandle nh_;
+
+  ///Name of service
   std::string service_name_;
 
 };
