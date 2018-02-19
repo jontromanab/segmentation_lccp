@@ -12,12 +12,15 @@ class SegmentationClient
 public:
   SegmentationClient(ros::NodeHandle* nodeHandle);
   void cloudCallback(const sensor_msgs::PointCloud2& msg);
+  void publishClouds();
 private:
   ros::NodeHandle nh_;
   std::string cloud_topic_ = "/camera/depth_registered/points";
   std::string segmentation_service_ = "segmentation_service";
   ros::Subscriber sub_;
   ros::Publisher table_cloud_pub_;
+  sensor_msgs::PointCloud2 table_cloud_ros_;
+  sensor_msgs::PointCloud2 object_cloud_ros_;
 };
 
 SegmentationClient::SegmentationClient(ros::NodeHandle *nodeHandle):nh_(*nodeHandle){
@@ -31,11 +34,18 @@ void SegmentationClient::cloudCallback(const sensor_msgs::PointCloud2& msg){
   ros::ServiceClient client = nh_.serviceClient<segmentation_lccp::segmentation>(segmentation_service_);
   segmentation_lccp::segmentation srv;
   srv.request.input_cloud = msg;
-  std::cout<<"Input cloud ros has: "<<srv.request.input_cloud.data.size()<<std::endl;
-  client.call(srv);
-  std::cout<<"Table cloud ros has: "<<srv.response.plane_cloud.data.size()<<std::endl;
-  table_cloud_pub_.publish(srv.response.plane_cloud);
+  if(client.call(srv)){
+    table_cloud_ros_ = srv.response.plane_cloud;
+    std::cout<<"I am calling service"<<std::endl;
+    std::cout<<"Table cloud has: "<<table_cloud_ros_.data.size()<<std::endl;
+    publishClouds();
+  }
 }
+
+void SegmentationClient::publishClouds(){
+  table_cloud_pub_.publish(table_cloud_ros_);
+}
+
 
 
 

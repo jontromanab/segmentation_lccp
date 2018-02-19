@@ -13,7 +13,6 @@ bool LccpSegmentationAlgorithm::segmentationCallback(segmentation_lccp::segmenta
     std::cout<<"Input cloud ros has: "<<req.input_cloud.data.size()<<std::endl;
     pcl::fromROSMsg(req.input_cloud, *cloud);
     std::unique_ptr<lccp_segmentation> seg(new lccp_segmentation);
-    //lccp_segmentation* seg = new lccp_segmentation();
     std::cout<<"Input cloud has: "<<cloud->points.size()<<std::endl;
     seg->init(*cloud);
     std::vector<Object> seg_objs;
