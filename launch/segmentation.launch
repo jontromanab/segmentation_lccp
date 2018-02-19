@@ -26,6 +26,11 @@
 
   </node>
 
+  <node name ="segmentation_client" pkg="segmentation_lccp" type="segmentation_lccp_client" output="screen">
+      <param name="segmentation_service" value="$(arg segmentation_service)"/>
+      <param name="cloud_topic" value="/camera/depth_registered/points"/>
+  </node>
+
 
 
 </launch>

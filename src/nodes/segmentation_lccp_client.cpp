@@ -10,13 +10,13 @@
 class SegmentationClient
 {
 public:
-  SegmentationClient(ros::NodeHandle* nodeHandle);
+  SegmentationClient(ros::NodeHandle* nodeHandle, std::string cloud_topic, std::string segmentation_service);
   void cloudCallback(const sensor_msgs::PointCloud2& msg);
   void publishClouds();
 private:
   ros::NodeHandle nh_;
-  std::string cloud_topic_ = "/camera/depth_registered/points";
-  std::string segmentation_service_ = "segmentation_service";
+  std::string cloud_topic_ ; //= "/camera/depth_registered/points";
+  std::string segmentation_service_;// = "segmentation_service";
   ros::Subscriber sub_;
   ros::Publisher table_cloud_pub_;
   ros::Publisher object_cloud_pub_;
@@ -24,7 +24,8 @@ private:
   sensor_msgs::PointCloud2 object_cloud_ros_;
 };
 
-SegmentationClient::SegmentationClient(ros::NodeHandle *nodeHandle):nh_(*nodeHandle){
+SegmentationClient::SegmentationClient(ros::NodeHandle *nodeHandle, std::string cloud_topic, std::string segmentation_service)
+  :nh_(*nodeHandle),cloud_topic_(cloud_topic),segmentation_service_(segmentation_service){
   sub_ = nh_.subscribe(cloud_topic_, 1, &SegmentationClient::cloudCallback, this);
   table_cloud_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("table",10);
   object_cloud_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("objects",10);
@@ -75,7 +76,10 @@ int main(int argc, char **argv)
 {
   ros::init(argc, argv, "segmentation_lccp_client");
   ros::NodeHandle nh;
-  SegmentationClient client(&nh);
+  std::string segmentation_service, cloud_topic;
+  nh.param("segmentation_client/segmentation_service",segmentation_service, std::string("segmentation_service"));
+  nh.param("segmentation_client/cloud_topic", cloud_topic, std::string("/camera/depth_registered/points"));
+  SegmentationClient client(&nh, cloud_topic, segmentation_service);
   ros::spin();
   return 0;
 }
