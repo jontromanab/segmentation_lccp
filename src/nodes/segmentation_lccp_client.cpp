@@ -4,6 +4,7 @@
 #include<pcl_conversions/pcl_conversions.h>
 #include<pcl/point_cloud.h>
 #include<pcl/point_types.h>
+#include <chrono>
 
 
 
@@ -15,8 +16,8 @@ public:
   void publishClouds();
 private:
   ros::NodeHandle nh_;
-  std::string cloud_topic_ ; //= "/camera/depth_registered/points";
-  std::string segmentation_service_;// = "segmentation_service";
+  std::string cloud_topic_ ;
+  std::string segmentation_service_;
   ros::Subscriber sub_;
   ros::Publisher table_cloud_pub_;
   ros::Publisher object_cloud_pub_;
@@ -34,6 +35,7 @@ SegmentationClient::SegmentationClient(ros::NodeHandle *nodeHandle, std::string 
 void SegmentationClient::cloudCallback(const sensor_msgs::PointCloud2& msg){
   ros::ServiceClient client = nh_.serviceClient<segmentation_lccp::segmentation>(segmentation_service_);
   segmentation_lccp::segmentation srv;
+  auto start = std::chrono::high_resolution_clock::now();
   srv.request.input_cloud = msg;
   if(client.call(srv)){
     table_cloud_ros_ = srv.response.plane_cloud;
@@ -64,6 +66,9 @@ void SegmentationClient::cloudCallback(const sensor_msgs::PointCloud2& msg){
     object_cloud_ros_.header.stamp = ros::Time::now();
     publishClouds();
   }
+  auto finish = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> elapsed = finish - start;
+  std::cout<<"Elapsed time: "<<elapsed.count()<<" s\n";
 }
 
 void SegmentationClient::publishClouds(){
