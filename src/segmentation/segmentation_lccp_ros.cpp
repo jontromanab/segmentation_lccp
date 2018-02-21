@@ -19,10 +19,24 @@ LccpSegmentationAlgorithm::LccpSegmentationAlgorithm(ros::NodeHandle* handle, co
   this->param_.use_sanity_criterion = param.use_sanity_criterion;
   segmentation_server_ = nh_.advertiseService(service_name_, &LccpSegmentationAlgorithm::segmentationCallback,
                                               this);
+  pthread_mutex_init(&this->obj_seg_mutex_, NULL);
+}
+
+LccpSegmentationAlgorithm::~LccpSegmentationAlgorithm(void){
+  pthread_mutex_destroy(&this->obj_seg_mutex_);
+}
+
+void LccpSegmentationAlgorithm::obj_seg_mutex_enter_(void){
+  pthread_mutex_lock(&this->obj_seg_mutex_);
+}
+
+void LccpSegmentationAlgorithm::obj_seg_mutex_exit_(void){
+  pthread_mutex_unlock(&this->obj_seg_mutex_);
 }
 
 bool LccpSegmentationAlgorithm::segmentationCallback(segmentation_lccp::segmentation::Request &req,
                                                      segmentation_lccp::segmentation::Response &res){
+    this->obj_seg_mutex_enter_();
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGBA>);
     pcl::fromROSMsg(req.input_cloud, *cloud);
     std::unique_ptr<lccp_segmentation> seg(new lccp_segmentation);
@@ -50,6 +64,7 @@ bool LccpSegmentationAlgorithm::segmentationCallback(segmentation_lccp::segmenta
       obj_msg.header.stamp = ros::Time::now();
       res.object_cloud.push_back(obj_msg);
     }
+    this->obj_seg_mutex_exit_();
     return true;
 }
 
