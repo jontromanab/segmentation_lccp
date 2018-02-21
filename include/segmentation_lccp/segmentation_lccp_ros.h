@@ -41,6 +41,10 @@ public:
    * @brief Constructor
    */
   LccpSegmentationAlgorithm(ros::NodeHandle* handle, const Parameters& param, std::string name);
+
+  /**
+   * @brief Destructor
+   */
   ~LccpSegmentationAlgorithm(void);
 private:
   ///server
@@ -64,8 +68,11 @@ private:
   ///Segmentation parameters
   supervoxel_parameters param_;
 
+  //Mutex
   pthread_mutex_t obj_seg_mutex_;
+
   void obj_seg_mutex_enter_(void);
+
   void obj_seg_mutex_exit_(void);
 
 };
