@@ -27,11 +27,13 @@ LccpSegmentationAlgorithm::~LccpSegmentationAlgorithm(void){
 }
 
 void LccpSegmentationAlgorithm::obj_seg_mutex_enter_(void){
-  pthread_mutex_lock(&this->obj_seg_mutex_);
+  //pthread_mutex_lock(&this->obj_seg_mutex_);
+  lock_.lock();
 }
 
 void LccpSegmentationAlgorithm::obj_seg_mutex_exit_(void){
-  pthread_mutex_unlock(&this->obj_seg_mutex_);
+  //pthread_mutex_unlock(&this->obj_seg_mutex_);
+  lock_.unlock();
 }
 
 bool LccpSegmentationAlgorithm::segmentationCallback(segmentation_lccp::segmentation::Request &req,

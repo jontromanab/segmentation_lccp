@@ -74,6 +74,7 @@ private:
   void obj_seg_mutex_enter_(void);
 
   void obj_seg_mutex_exit_(void);
+  boost::mutex lock_;
 
 };
 
